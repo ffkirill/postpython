@@ -1,8 +1,8 @@
-from distutils.core import setup
+from setuptools import find_packages, setup
 
 setup(
     name='postpython',
-    packages=['postpython'],
+    packages=find_packages(exclude=['tests*']),
     version='0.2.1',
     description='A library to use postman collection in python.',
     author='Bardia Heydari nejad, Kirill Golubev',
