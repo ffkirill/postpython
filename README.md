@@ -15,13 +15,13 @@ So with Postpython you can design more complex test suites.
 
 ## How to use?
 
-Import `PostPython`
+Import `PostPythonCollection`
 ```$python
-from postpython.core import PostPython
+from postpython import PostPythonCollection
 ```
-Make an instance from `PostPython` and give address of postman collection file.
+Make an instance from `PostPythonCollection` and give address of postman collection file.
 ```$python
-runner = PostPython('/path/to/collection/Postman echo.postman_collection')
+runner = PostPythonCollection('/path/to/collection/Postman echo.postman_collection')
 ```
 Now you can call your request. Folders' name change to upper camel case and requests' name change to lowercase form.
 In this example the name of folder is "Request Methods" and it's change to `RequestMethods` and the name of request was
