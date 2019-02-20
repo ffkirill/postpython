@@ -117,7 +117,7 @@ class PostPythonCollection:
         if item in self.flat_items:
             return self.flat_items[item]
         else:
-            return self.Folder(self.flat_items, (item,))
+            return PostPythonFolder(self.flat_items, (item,))
 
     def __repr__(self):
         return f'<PostPythonCollection {list(self.flat_items.keys())!r}>'
