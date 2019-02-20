@@ -2,5 +2,3 @@
 setup.cfg
 setup.py
 postpython/__init__.py
-postpython/core.py
-postpython/extractors.py

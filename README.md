@@ -13,11 +13,6 @@ Postpython is here for your continuous integration.
 - With postpython you write your own script. But collection runner just tun all your requests one by one.
 So with Postpython you can design more complex test suites.
 
-## How to install?
-Postpython is available on [PyPI](https://pypi.python.org/pypi?name=postpython&version=0.1.2&:action=display) and you can install it using pip:
-```
-$ pip install postpython
-```
 ## How to use?
 
 Import `PostPython`
@@ -40,47 +35,6 @@ print(response.status_code)
 ### Variable assignment
 In Postpython you can assign values to environment variables in runtime.
 ```
-runner.environments.update({'BASE_URL': 'http://127.0.0.1:5000'})
-runner.environments.update({'PASSWORD': 'test', 'EMAIL': 'you@email.com'})
+runner.environment.update({'BASE_URL': 'http://127.0.0.1:5000'})
+runner.environment.update({'PASSWORD': 'test', 'EMAIL': 'you@email.com'})
 ```
-### AttributeError
-Since `RequestMethods` and `get_request` does not really exists you intelligent IDE cannot help you.
-So Postpython try to correct you mistakes. If you spell a function or folder wrong it will suggest you the closest name.
-```
->>> response = runner.RequestMethods.get_requasts()
-
-Traceback (most recent call last):
-  File "test.py", line 11, in <module>
-    response = runner.RequestMethods.get_requasts()
-  File "/usr/local/lib/python3.5/site-packages/postpython/core.py", line 73, in __getattr__
-    'Did you mean %s' % (item, self.name, similar))
-AttributeError: get_requasts request does not exist in RequestMethods folder.
-Did you mean get_request
-
-```
-You can also use `help()` function to print all available requests.
-```
->>> runner.help()
-Posible requests:
-runner.AuthOthers.hawk_auth()
-runner.AuthOthers.basic_auth()
-runner.AuthOthers.oauth1_0_verify_signature()
-runner.RequestMethods.get_request()
-runner.RequestMethods.put_request()
-runner.RequestMethods.delete_request()
-runner.RequestMethods.post_request()
-runner.RequestMethods.patch_request()
-...
-
->>> runner.RequestMethods.help()
-runner.RequestMethods.delete_request()
-runner.RequestMethods.patch_request()
-runner.RequestMethods.get_request()
-runner.RequestMethods.put_request()
-runner.RequestMethods.post_request()
-
-```
-
-## Contribution
-Feel free to share your ideas or any problems in [issues](https://github.com/k3rn3l-p4n1c/postpython/issues).
-Contributions are welcomed. Give postpython a star to encourage me to continue its development.

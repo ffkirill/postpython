@@ -3,12 +3,11 @@ from distutils.core import setup
 setup(
     name='postpython',
     packages=['postpython'],
-    version='0.1.3',
+    version='0.2.1',
     description='A library to use postman collection in python.',
-    author='Bardia Heydari nejad',
-    author_email='bardia.heydarinejad@gmail.com',
-    url='https://github.com/k3rn3l-p4n1c/postpython',
-    download_url='https://codeload.github.com/k3rn3l-p4n1c/postpython/zip/master',  # I'll explain this in a second
+    author='Bardia Heydari nejad, Kirill Golubev',
+    author_email='bardia.heydarinejad@gmail.com, ff.kirill@gmail.com',
+    url='https://github.com/ffkirill/postpython.git',
     keywords=['postman', 'rest', 'api'],  # arbitrary keywords
     install_requires=[
         'requests',
