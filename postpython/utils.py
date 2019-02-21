@@ -38,6 +38,8 @@ def format_object(o, key_values):
         return format_dict(o, key_values)
     elif isinstance(o, list):
         return [format_object(oo, key_values) for oo in o]
+    else:
+        return o
 
 
 def format_dict(d, key_values):

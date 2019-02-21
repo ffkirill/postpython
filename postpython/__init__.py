@@ -29,7 +29,7 @@ class PostPythonDjangoRequestsBackend:
     def request(self, request_dict: dict):
         method = request_dict.pop('method')
         url = request_dict.pop('url')
-        data = json.dumps(request_dict.pop('json'))
+        data = json.dumps(request_dict.pop('json', None))
         headers = self.normalize_headers(request_dict.pop('headers'))
         return self.test_client.generic(path=url, method=method, data=data, **headers)
 
@@ -69,8 +69,8 @@ class PostPythonRequest:
         self.request_kwargs['url'] = data['request']['url']['raw']
         if data['request']['body']['mode'] == 'raw' and data['request']['body']['raw']:
             self.request_kwargs['json'] = extract_dict_from_raw_mode_data(data['request']['body']['raw'])
-            self.request_kwargs['method'] = data['request']['method']
-            self.request_kwargs['headers'] = extract_dict_from_raw_headers(data['request']['header'])
+        self.request_kwargs['method'] = data['request']['method']
+        self.request_kwargs['headers'] = extract_dict_from_raw_headers(data['request']['header'])
 
     def __call__(self, *args, **kwargs):
         new_env = copy(self.environment)
