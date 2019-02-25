@@ -1,5 +1,4 @@
 from collections import defaultdict
-from copy import copy
 import json
 
 from postpython.utils import (extract_dict_from_raw_mode_data, extract_dict_from_raw_headers, format_object,
@@ -8,9 +7,9 @@ from postpython.utils import (extract_dict_from_raw_mode_data, extract_dict_from
 
 class PostPythonRequestsBackend:
     @staticmethod
-    def request(request_dict: dict):
+    def request(request_dict: dict, files: dict):
         import requests
-        return requests.request(**request_dict)
+        return requests.request(**request_dict, files=files)
 
 
 class PostPythonDjangoRequestsBackend:
@@ -26,12 +25,24 @@ class PostPythonDjangoRequestsBackend:
             return key
         return {norm_name(key): value for key, value in headers.items()}
 
-    def request(self, request_dict: dict):
-        method = request_dict.pop('method')
-        url = request_dict.pop('url')
-        data = json.dumps(request_dict.pop('json', None))
+    def request(self, request_dict: dict, files: dict):
+        from django.test.client import encode_multipart
+        method = request_dict['method']
+        url = request_dict['url']
+
+        if 'json' in request_dict:
+            json_data = {'data': json.dumps(request_dict['json'])}
+        else:
+            json_data = {}
+
+        if 'data' in request_dict:
+            form_data = {'data': encode_multipart('BoUnDaRyStRiNg', dict(**request_dict['data'], **files)),
+                         'content_type': 'multipart/form-data; boundary=BoUnDaRyStRiNg'}
+        else:
+            form_data = {}
+
         headers = self.normalize_headers(request_dict.pop('headers'))
-        return self.test_client.generic(path=url, method=method, data=data, **headers)
+        return self.test_client.generic(path=url, method=method, **json_data, **form_data, **headers)
 
 
 class PostPythonFolder:
@@ -67,16 +78,28 @@ class PostPythonRequest:
         self.environment = environment
         self.name = data['name']
         self.request_kwargs['url'] = data['request']['url']['raw']
+
         if data['request']['body']['mode'] == 'raw' and data['request']['body']['raw']:
             self.request_kwargs['json'] = extract_dict_from_raw_mode_data(data['request']['body']['raw'])
+
+        elif data['request']['body']['mode'] == 'formdata' and data['request']['body']['formdata']:
+            self.process_form_data(data['request']['body']['formdata'])
+
         self.request_kwargs['method'] = data['request']['method']
         self.request_kwargs['headers'] = extract_dict_from_raw_headers(data['request']['header'])
 
-    def __call__(self, *args, **kwargs):
-        new_env = copy(self.environment)
-        new_env.update(kwargs)
-        formatted_kwargs = format_object(self.request_kwargs, new_env)
-        return self.backend.request(formatted_kwargs)
+    def process_form_data(self, data):
+        form_data = {}
+        self.request_kwargs['data'] = form_data
+        for subdict in data:
+            if subdict['type'] == 'text':
+                form_data[subdict['key']] = subdict['value']
+
+    def __call__(self, files: dict = None):
+        if files is None:
+            files = {}
+        formatted_data = format_object(self.request_kwargs, self.environment)
+        return self.backend.request(formatted_data, files)
 
     def __repr__(self):
         return f'PostPythonRequest("{self.name}")'

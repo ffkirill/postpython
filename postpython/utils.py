@@ -1,6 +1,8 @@
 import json
 import re
 
+PARAM_RE = re.compile(r'{{(.*?)}}')
+
 
 def extract_dict_from_raw_mode_data(raw):
     try:
@@ -30,8 +32,8 @@ def normalize_func_name(string):
 def format_object(o, key_values):
     if isinstance(o, str):
         try:
-            return o.replace('{{', '{').replace('}}', '}').format(**key_values)
-        except KeyError as e:
+            return PARAM_RE.sub(lambda x: key_values[x[1]].strip(), o)
+        except Exception as e:
             raise KeyError(
                 "Except value %s in PostPython environment variables.\n Environment variables are %s" % (e, key_values))
     elif isinstance(o, dict):
