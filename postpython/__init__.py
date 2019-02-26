@@ -1,5 +1,6 @@
 from collections import defaultdict
 import json
+from urllib3 import encode_multipart_formdata
 
 from postpython.utils import (extract_dict_from_raw_mode_data, extract_dict_from_raw_headers, format_object,
                               normalize_func_name, normalize_class_name)
@@ -9,6 +10,13 @@ class PostPythonRequestsBackend:
     @staticmethod
     def request(request_dict: dict, files: dict):
         import requests
+        if 'data' in request_dict and not files:  # force multipart/form-data
+            headers = {'Content-type': 'multipart/form-data; boundary=BoUnDaRyStRiNg'}
+            request_dict['data'], _ = encode_multipart_formdata(request_dict['data'], boundary='BoUnDaRyStRiNg')
+            if 'headers' in request_dict:
+                request_dict['headers'].update(**headers)
+            else:
+                request_dict['headers'] = headers
         return requests.request(**request_dict, files=files)
 
 
